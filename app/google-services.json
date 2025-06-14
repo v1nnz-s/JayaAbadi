@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "412770407483",
+    "project_id": "jaya-abadi-3eb6a",
+    "storage_bucket": "jaya-abadi-3eb6a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412770407483:android:fa50cf2ebaf8003271781e",
+        "android_client_info": {
+          "package_name": "com.example.jayaabadi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSUEyMqcfpXxcPidNAVOoAwZQ9JwTzXhk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412770407483:android:7cb5a5621761eb0f71781e",
+        "android_client_info": {
+          "package_name": "com.example.productsadder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSUEyMqcfpXxcPidNAVOoAwZQ9JwTzXhk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
