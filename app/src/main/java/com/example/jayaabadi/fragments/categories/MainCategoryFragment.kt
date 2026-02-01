@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.jayaabadi.R
 import com.example.jayaabadi.adapters.BestProductsAdapter
+import com.example.jayaabadi.data.Product
 import com.example.jayaabadi.databinding.FragmentMainCategoryBinding
 import com.example.jayaabadi.util.Resource
 import com.example.jayaabadi.util.showBottomNavigationView
@@ -24,11 +25,12 @@ import kotlinx.coroutines.flow.collectLatest
 private val TAG = "MainCategoryFragment"
 
 @AndroidEntryPoint
-class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
+class MainCategoryFragment : Fragment(R.layout.fragment_main_category), Searchable {
 
     private lateinit var binding: FragmentMainCategoryBinding
     private lateinit var bestProductsAdapter: BestProductsAdapter
     private val viewModel by viewModels<MainCategoryViewModel>()
+    private var allProducts: List<Product> = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +61,8 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
                     }
                     is Resource.Success -> {
                         Log.d(TAG, "Received recommended products: ${resource.data}")
-                        bestProductsAdapter.differ.submitList(resource.data)
+                        allProducts = resource.data ?: listOf()
+                        bestProductsAdapter.differ.submitList(allProducts)
                         binding.bestProductsProgressbar.visibility = View.GONE
                     }
                     is Resource.Error -> {
@@ -89,6 +92,18 @@ class MainCategoryFragment : Fragment(R.layout.fragment_main_category) {
             adapter = bestProductsAdapter
         }
     }
+
+    override fun filterProduk(query: String) {
+        val filteredList = if (query.isNotEmpty()) {
+            allProducts.filter {
+                it.name.contains(query, ignoreCase = true)
+            }
+        } else {
+            allProducts
+        }
+        bestProductsAdapter.differ.submitList(filteredList)
+    }
+
 
     override fun onResume() {
         super.onResume()

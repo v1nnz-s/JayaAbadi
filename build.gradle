@@ -1,4 +1,10 @@
 buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://jitpack.io' } // ✅ Tambahkan ini
+    }
+
     ext.kotlin_version = '1.8.21' // Perbarui versi Kotlin di sini
 
     dependencies {

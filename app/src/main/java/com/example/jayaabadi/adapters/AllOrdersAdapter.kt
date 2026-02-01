@@ -23,21 +23,20 @@ class AllOrdersAdapter : Adapter<AllOrdersAdapter.OrdersViewHolder>() {
                 val resources = itemView.resources
 
                 val colorDrawable = when (getOrderStatus(order.orderStatus)) {
-                    is OrderStatus.Ordered -> {
+
+                    is OrderStatus.Pending -> {
                         ColorDrawable(resources.getColor(R.color.g_orange_yellow))
                     }
-                    is OrderStatus.Confirmed -> {
-                        ColorDrawable(resources.getColor(R.color.g_green))
-                    }
+
+                    is OrderStatus.Paid,
+                    is OrderStatus.Confirmed,
+                    is OrderStatus.Shipped,
                     is OrderStatus.Delivered -> {
                         ColorDrawable(resources.getColor(R.color.g_green))
                     }
-                    is OrderStatus.Shipped -> {
-                        ColorDrawable(resources.getColor(R.color.g_green))
-                    }
-                    is OrderStatus.Canceled -> {
-                        ColorDrawable(resources.getColor(R.color.g_red))
-                    }
+
+                    is OrderStatus.Failed,
+                    is OrderStatus.Canceled,
                     is OrderStatus.Returned -> {
                         ColorDrawable(resources.getColor(R.color.g_red))
                     }

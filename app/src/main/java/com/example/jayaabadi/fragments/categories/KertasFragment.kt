@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.jayaabadi.data.Category
+import com.example.jayaabadi.data.Product
 import com.example.jayaabadi.util.Resource
 import com.example.jayaabadi.viewmodel.AllOrdersViewModel
 import com.example.jayaabadi.viewmodel.CategoryViewModel
@@ -17,11 +18,12 @@ import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class KertasFragment : BaseCategoryFragment() {
+class KertasFragment : BaseCategoryFragment(), Searchable {
 
     @Inject
     lateinit var firestore: FirebaseFirestore
-
+    private var allBestProducts: List<Product> = listOf()
+    private var allOfferProducts: List<Product> = listOf()
     private val mainCategoryViewModel by viewModels<MainCategoryViewModel>()
     val viewModel by viewModels<CategoryViewModel> {
         BaseCategoryViewModelFactoryFactory(firestore, Category.Kertas)
@@ -37,7 +39,8 @@ class KertasFragment : BaseCategoryFragment() {
                         showOfferLoading()
                     }
                     is Resource.Success -> {
-                        offerAdapter.differ.submitList(it.data)
+                        allOfferProducts = it.data ?: listOf()
+                        offerAdapter.differ.submitList(allOfferProducts)
                         hideOfferLoading()
                     }
                     is Resource.Error -> {
@@ -57,7 +60,8 @@ class KertasFragment : BaseCategoryFragment() {
                         showBestProductsLoading()
                     }
                     is Resource.Success -> {
-                        bestProductsAdapter.differ.submitList(it.data)
+                        allBestProducts = it.data ?: listOf()
+                        bestProductsAdapter.differ.submitList(allBestProducts)
                         hideBestProductsLoading()
                     }
                     is Resource.Error -> {
@@ -69,6 +73,23 @@ class KertasFragment : BaseCategoryFragment() {
                 }
             }
         }
+    }
+
+    override fun filterProduk(query: String) {
+        val filteredBest = if (query.isNotEmpty()) {
+            allBestProducts.filter { it.name.contains(query, ignoreCase = true) }
+        } else {
+            allBestProducts
+        }
+
+        val filteredOffer = if (query.isNotEmpty()) {
+            allOfferProducts.filter { it.name.contains(query, ignoreCase = true) }
+        } else {
+            allOfferProducts
+        }
+
+        bestProductsAdapter.differ.submitList(filteredBest)
+        offerAdapter.differ.submitList(filteredOffer)
     }
 
     override fun onBestProductsPagingRequest() {

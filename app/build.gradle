@@ -8,6 +8,7 @@ plugins {
 }
 
 android {
+    namespace 'com.example.jayaabadi'
     compileSdk 33
 
     defaultConfig {
@@ -86,6 +87,12 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:21.0.6'
 
     //Coroutines with firebase
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.5.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3'
 
+    implementation "com.airbnb.android:lottie:6.4.0"
+
+    implementation 'com.midtrans:uikit:2.0.0-SANDBOX'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
 }

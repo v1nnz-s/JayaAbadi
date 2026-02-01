@@ -110,4 +110,15 @@
             android:name="order"
             app:argType="com.example.jayaabadi.data.order.Order" />
     </fragment>
+    <fragment
+        android:id="@+id/searchResultFragment"
+        android:name="com.example.jayaabadi.fragments.shopping.SearchResultFragment"
+        android:label="Search Results">
+        <argument
+            android:name="query"
+            app:argType="string" />
+    </fragment>
+    <action
+        android:id="@+id/action_searchFragment_to_searchResultFragment"
+        app:destination="@id/searchResultFragment" />
 </navigation>

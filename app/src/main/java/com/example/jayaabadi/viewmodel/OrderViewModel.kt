@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,38 +25,43 @@ class OrderViewModel @Inject constructor(
     fun placeOrder(order: Order) {
         viewModelScope.launch {
             _order.emit(Resource.Loading())
-        }
-        firestore.runBatch { batch ->
-            //TODO: Add the order into user-orders collection
-            //TODO: Add the order into orders collection
-            //TODO: Delete the products from user-cart collection
 
-            firestore.collection("user")
-                .document(auth.uid!!)
-                .collection("orders")
-                .document()
-                .set(order)
+            try {
+                val uid = auth.uid ?: throw Exception("User not logged in")
 
-            firestore.collection("orders").document().set(order)
+                // 1️⃣ Ambil cart dulu (SEBELUM batch)
+                val cartSnapshot = firestore.collection("user")
+                    .document(uid)
+                    .collection("cart")
+                    .get()
+                    .await()
 
+                // 2️⃣ Baru batch
+                firestore.runBatch { batch ->
 
-            firestore.collection("user").document(auth.uid!!).collection("cart").get()
-                .addOnSuccessListener {
-                    it.documents.forEach {
-                        it.reference.delete()
+                    val userOrderRef = firestore.collection("user")
+                        .document(uid)
+                        .collection("orders")
+                        .document(order.orderId.toString())
+
+                    val adminOrderRef = firestore.collection("orders")
+                        .document(order.orderId.toString())
+
+                    batch.set(userOrderRef, order)
+                    batch.set(adminOrderRef, order)
+
+                    cartSnapshot.documents.forEach { doc ->
+                        batch.delete(doc.reference)
                     }
                 }
-        }.addOnSuccessListener {
-            viewModelScope.launch {
+
                 _order.emit(Resource.Success(order))
-            }
-        }.addOnFailureListener {
-            viewModelScope.launch {
-                _order.emit(Resource.Error(it.message.toString()))
+
+            } catch (e: Exception) {
+                _order.emit(Resource.Error(e.message ?: "Order failed"))
             }
         }
     }
-
 }
 
 

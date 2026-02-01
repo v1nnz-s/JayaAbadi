@@ -17,6 +17,7 @@ import com.example.jayaabadi.util.hideBottomNavigationView
 import com.shuhart.stepview.StepView
 
 class OrderDetailFragment : Fragment() {
+
     private lateinit var binding: FragmentOrderDetailBinding
     private val billingProductsAdapter by lazy { BillingProductsAdapter() }
     private val args by navArgs<OrderDetailFragmentArgs>()
@@ -35,7 +36,6 @@ class OrderDetailFragment : Fragment() {
 
         val order = args.order
         hideBottomNavigationView()
-
         setupOrderRv()
 
         binding.apply {
@@ -44,15 +44,15 @@ class OrderDetailFragment : Fragment() {
 
             stepView.setSteps(
                 mutableListOf(
-                    OrderStatus.Ordered.status,
+                    OrderStatus.Pending.status,
                     OrderStatus.Confirmed.status,
                     OrderStatus.Shipped.status,
-                    OrderStatus.Delivered.status,
+                    OrderStatus.Delivered.status
                 )
             )
 
             val currentOrderState = when (getOrderStatus(order.orderStatus)) {
-                is OrderStatus.Ordered -> 0
+                is OrderStatus.Pending -> 0
                 is OrderStatus.Confirmed -> 1
                 is OrderStatus.Shipped -> 2
                 is OrderStatus.Delivered -> 3
@@ -60,6 +60,7 @@ class OrderDetailFragment : Fragment() {
             }
 
             stepView.go(currentOrderState, false)
+
             if (currentOrderState == 3) {
                 stepView.done(true)
             }
@@ -67,8 +68,7 @@ class OrderDetailFragment : Fragment() {
             tvFullName.text = order.address.fullName
             tvAddress.text = "${order.address.street} ${order.address.city}"
             tvPhoneNumber.text = order.address.phone
-            tvTotalPrice.text = "$ ${order.totalPrice}"
-
+            tvTotalPrice.text = "Rp ${order.totalPrice}"
         }
 
         billingProductsAdapter.differ.submitList(order.products)
@@ -77,12 +77,13 @@ class OrderDetailFragment : Fragment() {
     private fun setupOrderRv() {
         binding.rvProducts.apply {
             adapter = billingProductsAdapter
-            layoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+            layoutManager =
+                LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
             addItemDecoration(VerticalItemDecoration())
         }
     }
 }
 
-private fun StepView.setSteps(mutableListOf: MutableList<String>) {
-
+private fun StepView.setSteps(steps: MutableList<String>) {
+    this.setSteps(steps)
 }

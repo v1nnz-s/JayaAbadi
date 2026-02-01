@@ -2,6 +2,8 @@ package com.example.jayaabadi.fragments.shopping
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -93,17 +95,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }.attach()
 
         // Menambahkan aksi klik ke tombol pencarian
-        binding.searchBar.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+        binding.searchBar.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {}
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 performSearch()
-                return@setOnEditorActionListener true
             }
-            false
-        }
+        })
     }
 
     private fun performSearch() {
         val query = binding.searchBar.text.toString().trim()
 
+        // Dapatkan posisi tab aktif
+        val currentPosition = binding.viewpagerHome.currentItem
+
+        // Dapatkan fragment aktif menggunakan tag ViewPager2
+        val fragmentTag = "f$currentPosition"
+        val fragment = childFragmentManager.findFragmentByTag(fragmentTag)
+
+        if (fragment is Searchable) {
+            fragment.filterProduk(query)
+        }
     }
 }
